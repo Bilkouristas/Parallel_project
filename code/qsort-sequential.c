@@ -23,9 +23,9 @@ void swap(int *v, int k, int l) {
 int partition(int *v, int n) {
   int pivot = v[n-1];
   int i = 0;
-  
-  for (int j = 0; j < n - 1; j++) 
-    if (v[j] < pivot) 
+
+  for (int j = 0; j < n - 1; j++)
+    if (v[j] < pivot)
       swap(v,i++,j);
 
   swap(v, i, n - 1);
@@ -41,4 +41,3 @@ void qsort_seq(int *v, int n) {
     qsort_seq(&v[p+1],n-p-1);
   }
 }
-
