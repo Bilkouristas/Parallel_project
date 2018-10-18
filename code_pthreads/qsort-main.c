@@ -29,6 +29,7 @@ int main(int argc, char **argv) {
 	   argv[0]);
     exit(1);
   }
+  printf("Q=%d , P=%d \n",atoi(argv[1]),atoi(argv[2]));
 
   /* variables to hold execution time */
   struct timeval startwtime, endwtime;
@@ -61,9 +62,8 @@ int main(int argc, char **argv) {
   + endwtime.tv_sec - startwtime.tv_sec);
 
   pass = test(p_a, n);
-  printf(" PThread TEST %s\n",(pass) ? "PASSed" : "FAILed");
+  // printf(" PThread TEST %s\n",(pass) ? "PASSed" : "FAILed");
   assert( pass != 0 );
-
   printf("Pthreads Parallel wall clock time: %f sec\n", par_thr_time);
 
 
@@ -79,7 +79,7 @@ int main(int argc, char **argv) {
 
   /* validate result */
   pass = test(a, n);
-  printf(" TEST %s\n",(pass) ? "PASSed" : "FAILed");
+  // printf(" TEST %s\n",(pass) ? "PASSed" : "FAILed");
   assert( pass != 0 );
 
     /* print sorted vector */

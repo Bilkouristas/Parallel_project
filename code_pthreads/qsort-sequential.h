@@ -18,9 +18,6 @@ void qsort_seq(int *v, int n);
 struct thread_data {
 int *array;
 int len;
-int right;
-int current_depth;
-int depth;
 };
 
 void parqsort(int *a, int n,int thread_num);
