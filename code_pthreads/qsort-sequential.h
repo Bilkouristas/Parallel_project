@@ -20,7 +20,11 @@ int *array;
 int len;
 };
 
+void cilksort(int *a,int n, int worker_num);
+
 void parqsort(int *a, int n,int thread_num);
+
+void omp_qsort(int *a, int n,int thread_num);
 
 int partition(int *v, int n);
 

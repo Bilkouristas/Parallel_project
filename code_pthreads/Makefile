@@ -1,10 +1,10 @@
 
 GCC = gcc
-CFLAGS = -pthread -O3
+CFLAGS = -fopenmp -pthread -fcilkplus -O3 -msse
 
 CMAIN=qsort
 
-all: qsort-main.o qsort-sequential.o parqsort.o
+all: qsort-main.o qsort-sequential.o parqsort.o cilksort.o omp_qsort.o
 	$(GCC) $(CFLAGS) $^ -o $(CMAIN)
 
 %.o: %.c

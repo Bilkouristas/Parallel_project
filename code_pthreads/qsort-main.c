@@ -19,6 +19,8 @@
 int  test( int *a, int n);
 void init( int *a, int n);
 void print(int *a, int n);
+int comparetor (const void * a, const void * b);
+
 
 /* --- Entry POINT --- */
 int main(int argc, char **argv) {
@@ -35,6 +37,9 @@ int main(int argc, char **argv) {
   struct timeval startwtime, endwtime;
   double seq_time;
   double par_thr_time;
+  double cilk_time;
+  double omp_time;
+  double std_time;
   int pass;
 
   /* initiate vector of random integers */
@@ -42,16 +47,63 @@ int main(int argc, char **argv) {
   int thread_num = 1<<atoi(argv[2]);
   int *a = (int *) malloc(n * sizeof(int));
   int *p_a= (int *) malloc(n* sizeof(int));
+  int *cilk_a=(int *) malloc(n* sizeof(int));
+  int *omp_a=(int *) malloc(n* sizeof(int));
+  int *std_a=(int *) malloc(n* sizeof(int));
 
   /* initialize vector */
   init(a, n);
   memcpy(p_a,a,sizeof(int)*n);
+  memcpy(cilk_a,a,sizeof(int)*n);
+  memcpy(omp_a,a,sizeof(int)*n);
+  memcpy(std_a,a,sizeof(int)*n);
 
 
   /* print vector */
   /* print(a, n); */
 
-  // >>>PARALLEL<<< qsort on p_a
+  // >>>      CILK      <<<
+ //  >>> IMPLEMENTATION <<<
+//   >>>      HERE      <<<
+
+
+  gettimeofday (&startwtime, NULL);
+  cilksort(cilk_a, n,thread_num);
+  gettimeofday (&endwtime, NULL);
+
+  /* get time in seconds */
+  cilk_time = (double)((endwtime.tv_usec - startwtime.tv_usec)/1.0e6
+  + endwtime.tv_sec - startwtime.tv_sec);
+
+  pass = test(cilk_a, n);
+  printf("CILK TEST %s\n",(pass) ? "PASSED" : "FAILED");
+  // assert( pass != 0 );
+  printf("  ->Cilk wall clock time: %f sec\n", cilk_time);
+
+
+  // >>>     OPENMP     <<<
+ //  >>> IMPLEMENTATION <<<
+//   >>>      HERE      <<<
+
+
+  gettimeofday (&startwtime, NULL);
+  omp_qsort(omp_a, n,thread_num);
+  gettimeofday (&endwtime, NULL);
+
+  /* get time in seconds */
+  omp_time = (double)((endwtime.tv_usec - startwtime.tv_usec)/1.0e6
+  + endwtime.tv_sec - startwtime.tv_sec);
+
+  pass = test(omp_a, n);
+  printf("OPENMP TEST %s\n",(pass) ? "PASSED" : "FAILED");
+  // assert( pass != 0 );
+  printf("  ->OpenMP wall clock time: %f sec\n", cilk_time);
+
+
+  // >>>    PTHREADS    <<<
+ //  >>> IMPLEMENTATION <<<
+//   >>>      HERE      <<<
+
 
   gettimeofday (&startwtime, NULL);
   parqsort(p_a, n,thread_num);
@@ -62,13 +114,14 @@ int main(int argc, char **argv) {
   + endwtime.tv_sec - startwtime.tv_sec);
 
   pass = test(p_a, n);
-  // printf(" PThread TEST %s\n",(pass) ? "PASSed" : "FAILed");
+  // printf(" PTHREADS TEST %s\n",(pass) ? "PASSED" : "FAILED");
   assert( pass != 0 );
-  printf("Pthreads Parallel wall clock time: %f sec\n", par_thr_time);
+  printf("  ->PTHREADS wall clock time: %f sec\n", par_thr_time);
 
+  /* >>>SEQUENTIAL<<<
+     >>>   HERE   <<<
+  sort elements in original order */
 
-
-  /* sort elements in original order */
   gettimeofday (&startwtime, NULL);
   qsort_seq(a, n);
   gettimeofday (&endwtime, NULL);
@@ -79,8 +132,8 @@ int main(int argc, char **argv) {
 
   /* validate result */
   pass = test(a, n);
-  // printf(" TEST %s\n",(pass) ? "PASSed" : "FAILed");
-  assert( pass != 0 );
+  printf("SEQUENTIAL TEST %s\n",(pass) ? "PASSED" : "FAILED");
+  // assert( pass != 0 );
 
     /* print sorted vector */
   /* print(a, n); */
@@ -91,9 +144,28 @@ int main(int argc, char **argv) {
 
 
   /* print execution time */
-  printf("Sequential wall clock time: %f sec\n", seq_time);
+  printf("  ->Sequential wall clock time: %f sec\n", seq_time);
 
-  /* exit */
+  // >>>    STANDARD    <<<
+ //  >>> IMPLEMENTATION <<<
+//   >>>      HERE      <<<
+
+
+  gettimeofday (&startwtime, NULL);
+  qsort(std_a,n,sizeof(int),comparetor);
+  gettimeofday (&endwtime, NULL);
+
+  /* get time in seconds */
+  std_time = (double)((endwtime.tv_usec - startwtime.tv_usec)/1.0e6
+  + endwtime.tv_sec - startwtime.tv_sec);
+
+  pass = test(std_a, n);
+  printf("STANDARD TEST %s\n",(pass) ? "PASSED" : "FAILED");
+  assert( pass != 0 );
+  printf("  ->STANDARD wall clock time: %f sec\n", std_time);
+
+
+  /* EXIT */
   return 0;
 
 }
@@ -133,3 +205,10 @@ void print(int *a, int n) {
   }
   printf("\n");
 }
+
+
+/** procedure  comparetor() : compare elements for qsort **/
+int comparetor (const void * a, const void * b)
+	{
+		return ( *(int*)a - *(int*)b );
+	}
