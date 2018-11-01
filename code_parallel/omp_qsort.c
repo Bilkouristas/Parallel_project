@@ -18,11 +18,11 @@ omp_lock_t lock;
 void omp_qs(int *a,int n){
   int parallel=0;
   // int currentWorkers=__cilkrts_get_nworkers();
-  int denom = (maxOpenThreads>16) ? 16 : maxOpenThreads;
+  // int denom = (maxOpenThreads>16) ? 16 : maxOpenThreads;
   if(n>1){
     int p = partition(a,n);
     if (currentOpenThreads<maxOpenThreads) {
-      if(n>(initialOpenLength/denom)){
+      if(n>=(initialOpenLength/(maxOpenThreads*2))){
         parallel=1;
         omp_set_lock(&lock);
         currentOpenThreads+=2;
