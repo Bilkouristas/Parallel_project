@@ -28,6 +28,10 @@ void omp_qsort(int *a, int n,int thread_num);
 
 int partition(int *v, int n);
 
+void setWorkerz(char *n);
+
+
+extern const int minSize;
 void print(int *a, int n);
 
 #endif /* _QSORT-SEQUENTIAL_H_ */

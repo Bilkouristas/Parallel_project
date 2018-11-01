@@ -20,7 +20,7 @@ int  test( int *a, int n);
 void init( int *a, int n);
 void print(int *a, int n);
 int comparetor (const void * a, const void * b);
-
+const int minSize = 2<<14;
 
 /* --- Entry POINT --- */
 int main(int argc, char **argv) {
@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
 	   argv[0]);
     exit(1);
   }
-  printf("Q=%d , P=%d \n",atoi(argv[1]),atoi(argv[2]));
+  printf("Q=%d , P=%d \n \n",atoi(argv[1]),atoi(argv[2]));
 
   /* variables to hold execution time */
   struct timeval startwtime, endwtime;
@@ -66,6 +66,10 @@ int main(int argc, char **argv) {
  //  >>> IMPLEMENTATION <<<
 //   >>>      HERE      <<<
 
+  char setWork_in[12];
+  sprintf(setWork_in, "%d", thread_num);
+
+  setWorkerz(setWork_in);
 
   gettimeofday (&startwtime, NULL);
   cilksort(cilk_a, n,thread_num);
@@ -97,7 +101,7 @@ int main(int argc, char **argv) {
   pass = test(omp_a, n);
   printf("OPENMP TEST %s\n",(pass) ? "PASSED" : "FAILED");
   // assert( pass != 0 );
-  printf("  ->OpenMP wall clock time: %f sec\n", cilk_time);
+  printf("  ->OpenMP wall clock time: %f sec\n", omp_time);
 
 
   // >>>    PTHREADS    <<<
@@ -114,7 +118,7 @@ int main(int argc, char **argv) {
   + endwtime.tv_sec - startwtime.tv_sec);
 
   pass = test(p_a, n);
-  // printf(" PTHREADS TEST %s\n",(pass) ? "PASSED" : "FAILED");
+  printf(" PTHREADS TEST %s\n",(pass) ? "PASSED" : "FAILED");
   assert( pass != 0 );
   printf("  ->PTHREADS wall clock time: %f sec\n", par_thr_time);
 
@@ -162,7 +166,7 @@ int main(int argc, char **argv) {
   pass = test(std_a, n);
   printf("STANDARD TEST %s\n",(pass) ? "PASSED" : "FAILED");
   assert( pass != 0 );
-  printf("  ->STANDARD wall clock time: %f sec\n", std_time);
+  printf("  ->STANDARD wall clock time: %f sec\n\n", std_time);
 
 
   /* EXIT */

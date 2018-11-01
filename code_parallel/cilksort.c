@@ -9,8 +9,14 @@
 
 char str_workernum[12];
 void setWorkers(int n){
-  sprintf(str_workernum, "%d", n);
+  // sprintf(str_workernum, "%d", n);
+  printf("workers are %d \n", n);
   // return str_workernum;
+}
+
+void setWorkerz(char *n){
+  __cilkrts_end_cilk();
+  __cilkrts_set_param("nworkers", n);
 }
 
 int getWorkers(){
@@ -26,12 +32,13 @@ void cilk_qs(int *a,int n){
   int denom = (maxWorkers>16) ? 16 : maxWorkers;
   if(n>1){
     int p = partition(a,n);
-    if (getWorkers()<maxWorkers) {
+    // // setWorkers(getWorkers());
+    // if (getWorkers()-1<maxWorkers) {
       if(n>(initialength/denom)){
         parallel=1;
       }
 
-    }
+    // }
 
     if (parallel) {
       cilk_spawn cilk_qs(a,p);
@@ -50,8 +57,12 @@ void cilk_qs(int *a,int n){
 void cilksort(int *a,int n, int worker_num){
   maxWorkers=worker_num;
   initialength=n;
-  setWorkers(worker_num);
-  __cilkrts_set_param("nworkers", str_workernum);
+  // setWorkers(worker_num);
+  // setWorkerz(str_workernum);
+  // __cilkrts_end_cilk();
+  // __cilkrts_set_param("nworkers", str_workernum);
+  setWorkers(getWorkers());
+
   cilk_spawn cilk_qs(a,n);
   cilk_sync;
 }
