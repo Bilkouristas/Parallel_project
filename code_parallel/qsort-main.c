@@ -68,7 +68,6 @@ int main(int argc, char **argv) {
 
   char setWork_in[12];
   sprintf(setWork_in, "%d", thread_num);
-
   setWorkerz(setWork_in);
 
   gettimeofday (&startwtime, NULL);
